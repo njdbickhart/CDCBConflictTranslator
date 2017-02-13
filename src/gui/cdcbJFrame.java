@@ -5,10 +5,13 @@
  */
 package gui;
 
+import SMConverter.SireMatchWorker;
 import cdcbconflicttranslator.CSVWorker;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.logging.Handler;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JFileChooser;
@@ -21,7 +24,7 @@ import jxl.write.WriteException;
  * @author njdbi
  */
 public class cdcbJFrame extends javax.swing.JFrame {
-
+    private static final Logger log = Logger.getLogger(cdcbJFrame.class.getName());
     /**
      * Creates new form cdcbJFrame
      */
@@ -39,17 +42,35 @@ public class cdcbJFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         fileChooser = new javax.swing.JFileChooser();
+        ConsoleScreen = new javax.swing.JScrollPane();
+        ConsoleTextArea = new javax.swing.JTextArea();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        CodeConverterPanel = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
         InputFileName = new javax.swing.JTextField();
         OutputExcelName = new javax.swing.JTextField();
         InputButtonBrowse = new javax.swing.JButton();
         OutputExcelBrowse = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        ConsoleScreen = new javax.swing.JScrollPane();
-        ConsoleTextArea = new javax.swing.JTextArea();
         runButton = new javax.swing.JButton();
+        SireMatchPanel = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        InputFileSMTextField = new javax.swing.JTextField();
+        OutputFileSMTextField = new javax.swing.JTextField();
+        InputButtonSMBrowse = new javax.swing.JButton();
+        OutputButtonSMBrowse = new javax.swing.JButton();
+        SMRunButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        ConsoleTextArea.setColumns(20);
+        ConsoleTextArea.setRows(5);
+        ConsoleScreen.setViewportView(ConsoleTextArea);
+
+        jLabel1.setText("Input CSV file");
+
+        jLabel2.setText("Output Excel file");
 
         InputButtonBrowse.setText("Browse");
         InputButtonBrowse.addActionListener(new java.awt.event.ActionListener() {
@@ -65,14 +86,6 @@ public class cdcbJFrame extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setText("Input CSV file");
-
-        jLabel2.setText("Output Excel file");
-
-        ConsoleTextArea.setColumns(20);
-        ConsoleTextArea.setRows(5);
-        ConsoleScreen.setViewportView(ConsoleTextArea);
-
         runButton.setText("Run");
         runButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -80,49 +93,137 @@ public class cdcbJFrame extends javax.swing.JFrame {
             }
         });
 
+        javax.swing.GroupLayout CodeConverterPanelLayout = new javax.swing.GroupLayout(CodeConverterPanel);
+        CodeConverterPanel.setLayout(CodeConverterPanelLayout);
+        CodeConverterPanelLayout.setHorizontalGroup(
+            CodeConverterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(CodeConverterPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(CodeConverterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, CodeConverterPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(24, 24, 24)
+                        .addComponent(InputFileName))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, CodeConverterPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(OutputExcelName, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(39, 39, 39)
+                .addGroup(CodeConverterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(InputButtonBrowse)
+                    .addComponent(OutputExcelBrowse))
+                .addGap(18, 18, 18)
+                .addComponent(runButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(70, 70, 70))
+        );
+        CodeConverterPanelLayout.setVerticalGroup(
+            CodeConverterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(CodeConverterPanelLayout.createSequentialGroup()
+                .addGap(32, 32, 32)
+                .addGroup(CodeConverterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(CodeConverterPanelLayout.createSequentialGroup()
+                        .addGap(2, 2, 2)
+                        .addGroup(CodeConverterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(InputFileName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(InputButtonBrowse))
+                        .addGap(18, 18, 18)
+                        .addGroup(CodeConverterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(OutputExcelName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(OutputExcelBrowse)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CodeConverterPanelLayout.createSequentialGroup()
+                        .addComponent(runButton, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(2, 2, 2)))
+                .addContainerGap(44, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("CDCB Code Converter", CodeConverterPanel);
+
+        jLabel3.setText("Input CSV file");
+
+        jLabel4.setText("Output CSV file");
+
+        InputFileSMTextField.setToolTipText("");
+
+        InputButtonSMBrowse.setText("Browse");
+        InputButtonSMBrowse.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                InputButtonSMBrowseActionPerformed(evt);
+            }
+        });
+
+        OutputButtonSMBrowse.setText("Browse");
+        OutputButtonSMBrowse.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                OutputButtonSMBrowseActionPerformed(evt);
+            }
+        });
+
+        SMRunButton.setText("Run");
+        SMRunButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SMRunButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout SireMatchPanelLayout = new javax.swing.GroupLayout(SireMatchPanel);
+        SireMatchPanel.setLayout(SireMatchPanelLayout);
+        SireMatchPanelLayout.setHorizontalGroup(
+            SireMatchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(SireMatchPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(SireMatchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(SireMatchPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addGap(18, 18, 18)
+                        .addComponent(InputFileSMTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(SireMatchPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(OutputFileSMTextField)))
+                .addGap(18, 18, 18)
+                .addGroup(SireMatchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(InputButtonSMBrowse)
+                    .addComponent(OutputButtonSMBrowse))
+                .addGap(18, 18, 18)
+                .addComponent(SMRunButton)
+                .addContainerGap(52, Short.MAX_VALUE))
+        );
+        SireMatchPanelLayout.setVerticalGroup(
+            SireMatchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(SireMatchPanelLayout.createSequentialGroup()
+                .addGap(37, 37, 37)
+                .addGroup(SireMatchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(SMRunButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(SireMatchPanelLayout.createSequentialGroup()
+                        .addGroup(SireMatchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(InputFileSMTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(InputButtonSMBrowse))
+                        .addGap(18, 18, 18)
+                        .addGroup(SireMatchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(OutputFileSMTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(OutputButtonSMBrowse))))
+                .addContainerGap(41, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("CDCB Sire Match Converter", SireMatchPanel);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(ConsoleScreen, javax.swing.GroupLayout.DEFAULT_SIZE, 524, Short.MAX_VALUE)
+            .addComponent(ConsoleScreen)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(38, 38, 38)
-                        .addComponent(jLabel1))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel2)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(InputFileName, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
-                    .addComponent(OutputExcelName))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(InputButtonBrowse)
-                    .addComponent(OutputExcelBrowse))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(runButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 594, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(runButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(InputFileName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel1))
-                            .addComponent(InputButtonBrowse))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(OutputExcelName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(OutputExcelBrowse)
-                            .addComponent(jLabel2))))
+                .addComponent(jTabbedPane1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ConsoleScreen, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -145,6 +246,8 @@ public class cdcbJFrame extends javax.swing.JFrame {
         boolean outputField = !this.OutputExcelName.getText().equals("");
         
         JFrame dialogFrame = new JFrame("Message Box");
+        
+        ConsoleTextArea.setText("");
         
         // Check if mandatory fields are filled
         if(!inputField || !outputField){
@@ -188,10 +291,74 @@ public class cdcbJFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_OutputExcelBrowseActionPerformed
 
+    private void InputButtonSMBrowseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InputButtonSMBrowseActionPerformed
+        int returnVal = fileChooser.showOpenDialog(this);
+        if(returnVal == JFileChooser.APPROVE_OPTION){
+            this.InputFileSMTextField.setText(fileChooser.getSelectedFile().getAbsolutePath());
+        }else{
+            System.out.println("Error accessing input file location! " + fileChooser.getSelectedFile().getAbsolutePath());
+        }
+    }//GEN-LAST:event_InputButtonSMBrowseActionPerformed
+
+    private void OutputButtonSMBrowseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OutputButtonSMBrowseActionPerformed
+        int returnVal = fileChooser.showOpenDialog(this);
+        if(returnVal == JFileChooser.APPROVE_OPTION){
+            this.OutputFileSMTextField.setText(fileChooser.getSelectedFile().getAbsolutePath());
+        }else{
+            System.out.println("Error accessing input file location! " + fileChooser.getSelectedFile().getAbsolutePath());
+        }
+    }//GEN-LAST:event_OutputButtonSMBrowseActionPerformed
+
+    private void SMRunButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SMRunButtonActionPerformed
+        //Parity check for data entry
+        boolean inputField = !this.InputFileSMTextField.getText().equals("");
+        boolean outputField = !this.OutputFileSMTextField.getText().equals("");
+        
+        JFrame dialogFrame = new JFrame("Message Box");
+        
+        ConsoleTextArea.setText("");
+        
+        // Check if mandatory fields are filled
+        if(!inputField || !outputField){
+            if(!inputField){
+                JOptionPane.showMessageDialog(dialogFrame, "You must enter an input CSV file to process!");
+            }else{
+                JOptionPane.showMessageDialog(dialogFrame, "You must select an output xls file name!");
+            }
+        }
+        
+        Path input = Paths.get(this.InputFileSMTextField.getText());
+        Path output = Paths.get(this.OutputFileSMTextField.getText());
+        
+        // Check if csv file exists
+        boolean FileExists = input.toFile().canRead();
+        
+        if(!FileExists){
+            JOptionPane.showMessageDialog(dialogFrame, "Could not read input CSV file! Please check if the file is hidden or modified!");
+        }
+        
+        int state = runSireMatch(input, output);
+        
+        if(state == 1){
+            JOptionPane.showMessageDialog(dialogFrame, "Conversion Completed successfully.");
+        }
+    }//GEN-LAST:event_SMRunButtonActionPerformed
+
+    private static int runSireMatch(Path input, Path output){
+        JFrame dialogFrame = new JFrame("Error Box");
+        SireMatchWorker worker = new SireMatchWorker();
+        
+        int state = worker.ProcessData(input, output);
+        if(state == 0){
+            JOptionPane.showMessageDialog(dialogFrame, "There was an error writing to the output!");
+        }
+        return 1;
+    }
     
     private static int runConversion(Path input, Path output){
         JFrame dialogFrame = new JFrame("Error Box");
         CSVWorker worker = new CSVWorker(input, output);
+        
         
         try{
             int state = worker.run();
@@ -232,6 +399,10 @@ public class cdcbJFrame extends javax.swing.JFrame {
         }
         //</editor-fold>
 
+        /* logger support */
+        
+        Handler h = new TextComponentHandler(ConsoleTextArea);
+        log.addHandler(h);
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
@@ -242,15 +413,25 @@ public class cdcbJFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel CodeConverterPanel;
     private javax.swing.JScrollPane ConsoleScreen;
-    private javax.swing.JTextArea ConsoleTextArea;
+    private static javax.swing.JTextArea ConsoleTextArea;
     private javax.swing.JButton InputButtonBrowse;
+    private javax.swing.JButton InputButtonSMBrowse;
     private javax.swing.JTextField InputFileName;
+    private javax.swing.JTextField InputFileSMTextField;
+    private javax.swing.JButton OutputButtonSMBrowse;
     private javax.swing.JButton OutputExcelBrowse;
     private javax.swing.JTextField OutputExcelName;
+    private javax.swing.JTextField OutputFileSMTextField;
+    private javax.swing.JButton SMRunButton;
+    private javax.swing.JPanel SireMatchPanel;
     private javax.swing.JFileChooser fileChooser;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JButton runButton;
     // End of variables declaration//GEN-END:variables
 }

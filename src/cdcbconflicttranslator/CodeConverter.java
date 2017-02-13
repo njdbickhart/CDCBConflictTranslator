@@ -65,7 +65,7 @@ public class CodeConverter {
         if(this.converter.containsKey(key))
             return this.converter.get(key);
         else{
-            if(key.equals("")){
+            if(key.isEmpty() || key.equals("")){
                 return "";
             }
             log.log(Level.WARNING, "Code: " + key + " was an unexpected value! Could not convert!");
