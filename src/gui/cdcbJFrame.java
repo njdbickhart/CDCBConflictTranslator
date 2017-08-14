@@ -5,15 +5,19 @@
  */
 package gui;
 
+import InterbullFileConverter.IndexableFields;
+import InterbullFileConverter.InterBullConverter;
 import SMConverter.SireMatchWorker;
 import cdcbconflicttranslator.CSVWorker;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Enumeration;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.AbstractButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -42,6 +46,7 @@ public class cdcbJFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         fileChooser = new javax.swing.JFileChooser();
+        buttonGroup1 = new javax.swing.ButtonGroup();
         ConsoleScreen = new javax.swing.JScrollPane();
         ConsoleTextArea = new javax.swing.JTextArea();
         jTabbedPane1 = new javax.swing.JTabbedPane();
@@ -61,6 +66,25 @@ public class cdcbJFrame extends javax.swing.JFrame {
         InputButtonSMBrowse = new javax.swing.JButton();
         OutputButtonSMBrowse = new javax.swing.JButton();
         SMRunButton = new javax.swing.JButton();
+        interbullPanel = new javax.swing.JPanel();
+        interbullInputFile = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        InterbullInputBrowse = new javax.swing.JButton();
+        FilterText = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        InterbullOutputFileText = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        OutputFileBrowse = new javax.swing.JButton();
+        RunInterbull = new javax.swing.JButton();
+        NoneFilter = new javax.swing.JRadioButton();
+        BreedFilter = new javax.swing.JRadioButton();
+        CountryFilter = new javax.swing.JRadioButton();
+        SexFilter = new javax.swing.JRadioButton();
+        IDNumFilter = new javax.swing.JRadioButton();
+        NameFilter = new javax.swing.JRadioButton();
+        OwnerFilter = new javax.swing.JRadioButton();
+        BDateFilter = new javax.swing.JRadioButton();
+        jLabel8 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -135,7 +159,7 @@ public class cdcbJFrame extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CodeConverterPanelLayout.createSequentialGroup()
                         .addComponent(runButton, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(2, 2, 2)))
-                .addContainerGap(44, Short.MAX_VALUE))
+                .addContainerGap(47, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("CDCB Code Converter", CodeConverterPanel);
@@ -188,7 +212,7 @@ public class cdcbJFrame extends javax.swing.JFrame {
                     .addComponent(OutputButtonSMBrowse))
                 .addGap(18, 18, 18)
                 .addComponent(SMRunButton)
-                .addContainerGap(52, Short.MAX_VALUE))
+                .addContainerGap(78, Short.MAX_VALUE))
         );
         SireMatchPanelLayout.setVerticalGroup(
             SireMatchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -206,10 +230,158 @@ public class cdcbJFrame extends javax.swing.JFrame {
                             .addComponent(jLabel4)
                             .addComponent(OutputFileSMTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(OutputButtonSMBrowse))))
-                .addContainerGap(41, Short.MAX_VALUE))
+                .addContainerGap(44, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("CDCB Sire Match Converter", SireMatchPanel);
+
+        jLabel5.setText("Input");
+
+        InterbullInputBrowse.setText("Browse");
+        InterbullInputBrowse.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                InterbullInputBrowseActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setText("FilterValue");
+
+        jLabel7.setText("Output File");
+
+        OutputFileBrowse.setText("Browse");
+        OutputFileBrowse.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                OutputFileBrowseActionPerformed(evt);
+            }
+        });
+
+        RunInterbull.setText("RUN");
+        RunInterbull.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RunInterbullActionPerformed(evt);
+            }
+        });
+
+        buttonGroup1.add(NoneFilter);
+        NoneFilter.setSelected(true);
+        NoneFilter.setText("NONE");
+
+        buttonGroup1.add(BreedFilter);
+        BreedFilter.setText("BREED");
+
+        buttonGroup1.add(CountryFilter);
+        CountryFilter.setText("COUNTRY");
+
+        buttonGroup1.add(SexFilter);
+        SexFilter.setText("SEX");
+
+        buttonGroup1.add(IDNumFilter);
+        IDNumFilter.setText("ID NUM");
+
+        buttonGroup1.add(NameFilter);
+        NameFilter.setText("NAME");
+
+        buttonGroup1.add(OwnerFilter);
+        OwnerFilter.setText("OWNER");
+
+        buttonGroup1.add(BDateFilter);
+        BDateFilter.setText("BDATE");
+
+        jLabel8.setText("Filters");
+
+        javax.swing.GroupLayout interbullPanelLayout = new javax.swing.GroupLayout(interbullPanel);
+        interbullPanel.setLayout(interbullPanelLayout);
+        interbullPanelLayout.setHorizontalGroup(
+            interbullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(interbullPanelLayout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addGroup(interbullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5)
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel7))
+                .addGap(32, 32, 32)
+                .addGroup(interbullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(InterbullOutputFileText, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
+                    .addComponent(FilterText)
+                    .addComponent(interbullInputFile))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(interbullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(InterbullInputBrowse, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(OutputFileBrowse, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(RunInterbull, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(interbullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(interbullPanelLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(interbullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, interbullPanelLayout.createSequentialGroup()
+                                .addGroup(interbullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(CountryFilter)
+                                    .addComponent(SexFilter))
+                                .addGap(8, 28, Short.MAX_VALUE)
+                                .addGroup(interbullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(interbullPanelLayout.createSequentialGroup()
+                                        .addComponent(BDateFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addContainerGap(12, Short.MAX_VALUE))
+                                    .addComponent(OwnerFilter)))
+                            .addGroup(interbullPanelLayout.createSequentialGroup()
+                                .addComponent(BreedFilter)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(NameFilter)
+                                .addGap(46, 46, 46))
+                            .addGroup(interbullPanelLayout.createSequentialGroup()
+                                .addComponent(NoneFilter)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(IDNumFilter)
+                                .addGap(38, 38, 38))))
+                    .addGroup(interbullPanelLayout.createSequentialGroup()
+                        .addGap(70, 70, 70)
+                        .addComponent(jLabel8)
+                        .addGap(0, 0, Short.MAX_VALUE))))
+        );
+        interbullPanelLayout.setVerticalGroup(
+            interbullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(interbullPanelLayout.createSequentialGroup()
+                .addGroup(interbullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(interbullPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(interbullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(interbullInputFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5)
+                            .addComponent(InterbullInputBrowse))
+                        .addGap(18, 18, 18)
+                        .addGroup(interbullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(FilterText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel6)
+                            .addComponent(BreedFilter)
+                            .addComponent(NameFilter)))
+                    .addGroup(interbullPanelLayout.createSequentialGroup()
+                        .addGap(22, 22, 22)
+                        .addGroup(interbullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(NoneFilter)
+                            .addComponent(IDNumFilter)))
+                    .addComponent(jLabel8))
+                .addGroup(interbullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(interbullPanelLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addGroup(interbullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(InterbullOutputFileText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel7)
+                            .addComponent(OutputFileBrowse))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(RunInterbull))
+                    .addGroup(interbullPanelLayout.createSequentialGroup()
+                        .addGap(8, 8, 8)
+                        .addGroup(interbullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(CountryFilter)
+                            .addComponent(OwnerFilter))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(interbullPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(SexFilter)
+                            .addComponent(BDateFilter))
+                        .addContainerGap())))
+        );
+
+        jTabbedPane1.addTab("InterBullFile Converter", interbullPanel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -217,8 +389,9 @@ public class cdcbJFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(ConsoleScreen)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 594, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap()
+                .addComponent(jTabbedPane1)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -344,6 +517,100 @@ public class cdcbJFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_SMRunButtonActionPerformed
 
+    private void InterbullInputBrowseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InterbullInputBrowseActionPerformed
+        int returnVal = fileChooser.showOpenDialog(this);
+        if(returnVal == JFileChooser.APPROVE_OPTION){
+            this.interbullInputFile.setText(fileChooser.getSelectedFile().getAbsolutePath());
+        }else{
+            System.out.println("Error accessing input file location! " + fileChooser.getSelectedFile().getAbsolutePath());
+        }
+    }//GEN-LAST:event_InterbullInputBrowseActionPerformed
+
+    private void OutputFileBrowseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OutputFileBrowseActionPerformed
+        int returnVal = fileChooser.showOpenDialog(this);
+        if(returnVal == JFileChooser.APPROVE_OPTION){
+            this.InterbullOutputFileText.setText(fileChooser.getSelectedFile().getAbsolutePath());
+        }else{
+            System.out.println("Error getting output file location! " + fileChooser.getSelectedFile().getAbsolutePath());
+        }
+    }//GEN-LAST:event_OutputFileBrowseActionPerformed
+
+    private void RunInterbullActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RunInterbullActionPerformed
+        //Parity check for data entry
+        boolean inputField = !this.interbullInputFile.getText().equals("");
+        boolean outputField = !this.InterbullOutputFileText.getText().equals("");
+        
+        JFrame dialogFrame = new JFrame("Message Box");
+        
+        ConsoleTextArea.setText("");
+        
+        if(!inputField)
+            JOptionPane.showMessageDialog(dialogFrame, "You must enter an input Interbull File to process!");
+        
+        // Setting this to a required field at this point. Oh well! Can change later to add more features
+        if(!outputField)
+            JOptionPane.showMessageDialog(dialogFrame, "You must enter an output csv File name to process!");
+        
+        // Check if input file exists
+        boolean inputFileExists = Paths.get(this.interbullInputFile.getText()).toFile().canRead();
+        if(! inputFileExists)
+            JOptionPane.showMessageDialog(dialogFrame, "Error finding input Interbull file! Does your file exist?");
+        
+        // Get radio input for filtration
+        IndexableFields filterSelection = null;
+        for(Enumeration<AbstractButton> buttons = this.buttonGroup1.getElements(); buttons.hasMoreElements();){
+            AbstractButton button = buttons.nextElement();
+            
+            if(button.isSelected()){
+                switch(button.getText()){
+                    case "BREED":
+                        filterSelection = IndexableFields.BREED;
+                        break;
+                    case "COUNTRY":
+                        filterSelection = IndexableFields.COUNTRY;
+                        break;
+                    case "SEX":
+                        filterSelection = IndexableFields.SEX;
+                        break;
+                    case "ID NUM":
+                        filterSelection = IndexableFields.IDNUM;
+                        break;
+                    case "NAME":
+                        filterSelection = IndexableFields.NAME;
+                        break;
+                    case "OWNER":
+                        filterSelection = IndexableFields.OWNER;
+                        break;
+                    case "BDATE":
+                        filterSelection = IndexableFields.BDATE;
+                        break;
+                    case "NONE":
+                    default:
+                        filterSelection = IndexableFields.NONE;                    
+                }
+            }
+        }
+        
+        if(filterSelection != IndexableFields.NONE && this.FilterText.getText().equals(""))
+            JOptionPane.showMessageDialog(dialogFrame, "Error! Selected a filter but did not enter filtration text!");
+        
+        InterBullConverter converter = new InterBullConverter(this.interbullInputFile.getText(), 
+                this.InterbullOutputFileText.getText());
+        
+        int state = 0;
+        try{
+            state = converter.PrintToOutFile(this.FilterText.getText(), filterSelection);
+        }catch(IOException ex){
+            JOptionPane.showMessageDialog(dialogFrame, "Error! Could not process text file and print to output! Please double check your input file!");
+        }
+        
+        if(state >= 1){
+            JOptionPane.showMessageDialog(dialogFrame, "Conversion and filtration completed successfully. Printed: " + state + " records to file.");
+        }else{
+            JOptionPane.showMessageDialog(dialogFrame, "Did not convert successfully, or did not find any entries!");
+        }
+    }//GEN-LAST:event_RunInterbullActionPerformed
+
     private static int runSireMatch(Path input, Path output){
         JFrame dialogFrame = new JFrame("Error Box");
         SireMatchWorker worker = new SireMatchWorker();
@@ -413,24 +680,44 @@ public class cdcbJFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JRadioButton BDateFilter;
+    private javax.swing.JRadioButton BreedFilter;
     private javax.swing.JPanel CodeConverterPanel;
     private javax.swing.JScrollPane ConsoleScreen;
     private static javax.swing.JTextArea ConsoleTextArea;
+    private javax.swing.JRadioButton CountryFilter;
+    private javax.swing.JTextField FilterText;
+    private javax.swing.JRadioButton IDNumFilter;
     private javax.swing.JButton InputButtonBrowse;
     private javax.swing.JButton InputButtonSMBrowse;
     private javax.swing.JTextField InputFileName;
     private javax.swing.JTextField InputFileSMTextField;
+    private javax.swing.JButton InterbullInputBrowse;
+    private javax.swing.JTextField InterbullOutputFileText;
+    private javax.swing.JRadioButton NameFilter;
+    private javax.swing.JRadioButton NoneFilter;
     private javax.swing.JButton OutputButtonSMBrowse;
     private javax.swing.JButton OutputExcelBrowse;
     private javax.swing.JTextField OutputExcelName;
+    private javax.swing.JButton OutputFileBrowse;
     private javax.swing.JTextField OutputFileSMTextField;
+    private javax.swing.JRadioButton OwnerFilter;
+    private javax.swing.JButton RunInterbull;
     private javax.swing.JButton SMRunButton;
+    private javax.swing.JRadioButton SexFilter;
     private javax.swing.JPanel SireMatchPanel;
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JFileChooser fileChooser;
+    private javax.swing.JTextField interbullInputFile;
+    private javax.swing.JPanel interbullPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JButton runButton;
     // End of variables declaration//GEN-END:variables
